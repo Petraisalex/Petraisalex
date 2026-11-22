@@ -15,7 +15,7 @@
 <tr>
 <td width="62%" valign="top">
 
-<img src="art/whoami.svg" width="100%" alt="Who am I. Study: BSc International Business with a Finance major, and an MSc in Organizational Management across three business schools. Work: agentic workflows with n8n and business intelligence for SMEs and startups. Build: an XGBoost decision engine scoring tabular transactions in under 50 ms for digital banks. Won: Junction Hackathon runner-up of 120+ teams.">
+<img src="art/whoami.svg" width="100%" alt="Who am I. Study: BSc International Business with a Finance major, and an MSc in Organizational Management across three business schools, with a potential switch to Digital Financial Technology. Work: agentic workflows with n8n and business intelligence for SMEs and startups. Build: an XGBoost decision engine scoring tabular transactions in under 50 ms for digital banks. Competed: RAISE Hackathon Paris, top 3% of 922 teams, with a cross-border payment fraud model that won a 7,000 euro prize.">
 
 <img src="art/profile.svg" width="100%" alt="Profile. Based currently in Maastricht, Netherlands. Languages: English (native), Russian (native), Dutch (professional), Japanese (learning, aiming for JLPT N5 by December 2027), German (learning, aiming for Goethe B1 by December 2028). Off-screen: live-coding music, Hyrox and boxing, wine tasting.">
 
