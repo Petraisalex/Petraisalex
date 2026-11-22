@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 712 112" width="712" height="112" role="img" aria-label="Learning in TypeScript: Next.js (full-stack React framework)."><style>
+.fg{fill:#1f2328}.mu{fill:#59636e}.ac{fill:#dd2d51}.acs{stroke:#dd2d51}
+.cd{fill:#f6f8fa;stroke:#d1d9e0}.bgs{stroke:#f6f8fa}
+@media(prefers-color-scheme:dark){
+.fg{fill:#f0f6fc}.mu{fill:#9198a1}.ac{fill:#e04060}.acs{stroke:#e04060}
+.cd{fill:#151b23;stroke:#30363d}.bgs{stroke:#151b23}}
+</style><text class="mu" x="356.0" y="14" text-anchor="middle" font-family="'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11.5">typescript → full-stack React framework</text><rect class="cd" x="320.5" y="26.5" width="71" height="83" rx="12" stroke-dasharray="5 4"/><g transform="translate(340.0 40) scale(1.3333)"><path class="ac" d="M18.665 21.978C16.758 23.255 14.465 24 12 24 5.377 24 0 18.623 0 12S5.377 0 12 0s12 5.377 12 12c0 3.583-1.574 6.801-4.067 9.001L9.219 7.2H7.2v9.596h1.615V9.251l9.85 12.727Zm-3.332-8.533 1.6 2.061V7.2h-1.6v6.245Z"/></g><text class="fg" x="356.0" y="94" text-anchor="middle" font-family="Montserrat, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11.5" font-weight="600">Next.js</text></svg>

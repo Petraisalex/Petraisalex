@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 712 60" width="712" height="60" role="img" aria-label="SQL: 2 tools. Click to show them."><style>
+.fg{fill:#1f2328}.mu{fill:#59636e}.ac{fill:#dd2d51}.acs{stroke:#dd2d51}
+.cd{fill:#f6f8fa;stroke:#d1d9e0}.bgs{stroke:#f6f8fa}
+@media(prefers-color-scheme:dark){
+.fg{fill:#f0f6fc}.mu{fill:#9198a1}.ac{fill:#e04060}.acs{stroke:#e04060}
+.cd{fill:#151b23;stroke:#30363d}.bgs{stroke:#151b23}}
+</style><rect class="cd" x=".5" y=".5" width="711" height="59" rx="12" stroke-dasharray="5 4"/><g transform="translate(20 16.0) scale(1.1667)"><ellipse class="acs" cx="12" cy="5" rx="8" ry="3" fill="none" stroke-width="2"/><path class="acs" d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3" fill="none" stroke-width="2"/></g><text class="fg" x="62" y="35.5" font-family="Montserrat, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700">SQL</text><text class="ac" x="690" y="34.5" text-anchor="end" font-family="'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13">2 tools ▸</text></svg>

@@ -17,12 +17,12 @@
 
 <img src="art/whoami.svg" width="100%" alt="Who am I. Study: BSc International Business with a Finance major, and an MSc in Organizational Management across three business schools. Work: agentic workflows with n8n and business intelligence for SMEs and startups. Build: an XGBoost decision engine scoring tabular transactions in under 50 ms for digital banks. Won: Junction Hackathon runner-up of 120+ teams.">
 
-<img src="art/profile.svg" width="100%" alt="Profile. Based currently in Maastricht, Netherlands. Languages: English (native), Russian (native), Dutch (professional), Japanese (learning), German (learning). Off-screen: live-coding music, Hyrox and boxing, wine tasting.">
+<img src="art/profile.svg" width="100%" alt="Profile. Based currently in Maastricht, Netherlands. Languages: English (native), Russian (native), Dutch (professional), Japanese (learning, aiming for JLPT N5 by December 2027), German (learning, aiming for Goethe B1 by December 2028). Off-screen: live-coding music, Hyrox and boxing, wine tasting.">
 
 </td>
 <td width="38%" align="center" valign="middle">
 
-<img src="portrait.svg" width="280" alt="Character-art portrait of Alexander Petrakov">
+<img src="art/portrait-glitch.svg" width="280" alt="Character-art portrait of Alexander Petrakov with a subtle terminal-glitch animation">
 
 </td>
 </tr>
@@ -31,8 +31,50 @@
 <img src="hd-tech-stack.svg" width="100%" alt="tech stack">
 
 <p align="center">
-  <img src="art/stack.svg" width="712" alt="Mastered: Python, n8n, Power BI, Excel, R, Git. Learning now, data and ML: CatBoost, SHAP, FastAPI, Docker, MLflow, BigQuery, Looker, UMAP, BERTopic. Learning now, web: HTML5, CSS3, JavaScript, TypeScript, React, Next.js.">
+  <img src="art/stack-mastered.svg" width="712" alt="Mastered: Python, n8n, Power BI, Excel, R, Git.">
 </p>
+
+<div align="center">
+
+<img src="art/learn-data.svg" width="712" alt="Learning now, data and ML. Click a language to see what I am learning in it.">
+
+<details>
+<summary><picture><img src="art/learn-python.svg" width="712" alt="Python: 6 libraries (CatBoost, SHAP, FastAPI, MLflow, UMAP, BERTopic). Click to show them."></picture></summary>
+<img src="art/learn-python-libs.svg" width="712" alt="Learning in Python: CatBoost, SHAP, FastAPI, MLflow, UMAP, BERTopic (modelling · explainability · serving · tracking · topics).">
+</details>
+
+<details>
+<summary><picture><img src="art/learn-sql.svg" width="712" alt="SQL: 2 tools (BigQuery, Looker). Click to show them."></picture></summary>
+<img src="art/learn-sql-libs.svg" width="712" alt="Learning in SQL: BigQuery, Looker (warehouse queries and BI modelling).">
+</details>
+
+<details>
+<summary><picture><img src="art/learn-docker.svg" width="712" alt="Docker: 1 tool (Dockerfile). Click to show them."></picture></summary>
+<img src="art/learn-docker-libs.svg" width="712" alt="Learning in Docker: Dockerfile (containers for serving models).">
+</details>
+
+</div>
+
+<div align="center">
+
+<img src="art/learn-web.svg" width="712" alt="Learning now, web. Click a language to see what I am learning in it.">
+
+<details>
+<summary><picture><img src="art/learn-javascript.svg" width="712" alt="JavaScript: 1 library (React). Click to show them."></picture></summary>
+<img src="art/learn-javascript-libs.svg" width="712" alt="Learning in JavaScript: React (UI components).">
+</details>
+
+<details>
+<summary><picture><img src="art/learn-typescript.svg" width="712" alt="TypeScript: 1 framework (Next.js). Click to show them."></picture></summary>
+<img src="art/learn-typescript-libs.svg" width="712" alt="Learning in TypeScript: Next.js (full-stack React framework).">
+</details>
+
+<details>
+<summary><picture><img src="art/learn-htmlcss.svg" width="712" alt="HTML &amp; CSS: 2 standards (HTML5, CSS3). Click to show them."></picture></summary>
+<img src="art/learn-htmlcss-libs.svg" width="712" alt="Learning in HTML &amp; CSS: HTML5, CSS3 (layout and semantics, no extra libraries).">
+</details>
+
+</div>
 
 <img src="hd-projects.svg" width="100%" alt="projects">
 
