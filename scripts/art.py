@@ -5,7 +5,10 @@ art.py — draw the profile's static graphics in the banner's navy & pink.
 Outputs (all in art/):
     whoami.svg, profile.svg About Me as box-drawn 'files' (work, and person)
     typing.svg              rotating "typed" tagline under the banner
-    stack.svg               tech-stack tiles
+    stack-mastered.svg      tech-stack tiles: mastered
+    learn-<group>.svg       "learning now" headings (data, web)
+    learn-<lang>.svg        clickable language card (README <summary>)
+    learn-<lang>-libs.svg   what I'm learning in that language (README <details> body)
     connect-<name>.svg      link buttons
     wave.svg                footer wave
 
@@ -38,15 +41,34 @@ TAGLINES = [
 ]
 
 MASTERED = ["python", "n8n", "powerbi", "excel", "r", "git"]
-LEARNING = ["catboost", "shap", "fastapi", "docker", "mlflow",
-            "googlebigquery", "looker", "umap", "bertopic"]
-LEARNING_WEB = ["html5", "css3", "javascript", "typescript", "react", "nextdotjs"]
+# Learning now, grouped by language. Each entry:
+#   (slug, language label, card icons, [what I'm learning in it], noun, caption)
+# The README shows one clickable <details> per language; the panel lists its items.
+LEARNING_GROUPS = {
+    "data": ("LEARNING NOW · DATA & ML", [
+        ("python", "Python", ["python"],
+         ["catboost", "shap", "fastapi", "mlflow", "umap", "bertopic"],
+         "libraries", "modelling · explainability · serving · tracking · topics"),
+        ("sql", "SQL", ["sql"], ["googlebigquery", "looker"],
+         "tools", "warehouse queries and BI modelling"),
+        ("docker", "Docker", ["docker"], ["dockerfile"],
+         "tool", "containers for serving models"),
+    ]),
+    "web": ("LEARNING NOW · WEB", [
+        ("javascript", "JavaScript", ["javascript"], ["react"], "library", "UI components"),
+        ("typescript", "TypeScript", ["typescript"], ["nextdotjs"], "framework",
+         "full-stack React framework"),
+        ("htmlcss", "HTML & CSS", ["html5", "css3"], ["html5", "css3"], "standards",
+         "layout and semantics, no extra libraries"),
+    ]),
+}
 LABELS = {"python": "Python", "n8n": "n8n", "powerbi": "Power BI", "excel": "Excel", "r": "R",
           "git": "Git", "catboost": "CatBoost", "shap": "SHAP", "fastapi": "FastAPI",
-          "docker": "Docker", "mlflow": "MLflow", "googlebigquery": "BigQuery",
-          "looker": "Looker", "umap": "UMAP", "bertopic": "BERTopic",
-          "html5": "HTML5", "css3": "CSS3", "javascript": "JavaScript",
+          "docker": "Docker", "dockerfile": "Dockerfile", "mlflow": "MLflow",
+          "googlebigquery": "BigQuery", "looker": "Looker", "umap": "UMAP", "bertopic": "BERTopic",
+          "html5": "HTML5", "css3": "CSS3", "javascript": "JavaScript", "sql": "SQL",
           "typescript": "TypeScript", "react": "React", "nextdotjs": "Next.js"}
+ICON_ALIAS = {"dockerfile": "docker"}
 
 CONNECT = [("linkedin", "LinkedIn"), ("instagram", "Instagram"), ("email", "Email")]
 
@@ -71,8 +93,13 @@ def icon_path(name):
 def mark(name, x, y, size):
     """A 24-unit icon placed at (x, y) and scaled to `size` px, in the accent colour."""
     s = size / 24
+    name = ICON_ALIAS.get(name, name)
     head = f'<g transform="translate({x} {y}) scale({s:.4f})">'
-    if name == "powerbi":   # three rising bars
+    if name == "sql":       # database cylinder
+        body = ('<ellipse class="acs" cx="12" cy="5" rx="8" ry="3" fill="none" stroke-width="2"/>'
+                '<path class="acs" d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3" '
+                'fill="none" stroke-width="2"/>')
+    elif name == "powerbi":   # three rising bars
         body = ('<rect class="ac" x="2.5" y="12" width="5" height="10" rx="1.4"/>'
                 '<rect class="ac" x="9.5" y="7" width="5" height="15" rx="1.4"/>'
                 '<rect class="ac" x="16.5" y="2" width="5" height="20" rx="1.4"/>')
@@ -183,13 +210,63 @@ BASED_IN = "Maastricht, NL"
 LANGUAGES = [("English", 10, "native"), ("Russian", 10, "native"),
              ("Dutch", 7, "professional"), ("Japanese", 2, "learning"),
              ("German", 2, "learning")]
+# certificate each "learning" language is aiming for: language -> (certificate, by when)
+CERT_TARGETS = {"Japanese": ("JLPT N5", "Dec 2027"),
+                "German": ("Goethe B1", "Dec 2028")}
 OFF_SCREEN = ["live-coding music", "Hyrox & boxing", "wine tasting"]
 
 CARD_FS, CARD_CW, CARD_LH = 13, 13 * 0.6, 22
-CARD_INNER = 60                          # characters inside the frame
+CARD_INNER = 63                          # characters inside the frame (fits the cert reveal)
+OFF_SCREEN_WRAP = 52                     # characters per off_screen line
+
+# cert reveal: types in after "learning", holds, erases; one shared loop, rows staggered
+REVEAL_COL = 37                          # one space after the level word (col 28 + 8 + 1)
+REVEAL_TYPE, REVEAL_HOLD, REVEAL_ERASE = 0.06, 3.0, 0.025   # seconds
+REVEAL_LOOP = 14.0                       # seconds for the whole cycle
+REVEAL_STARTS = [1.5, 8.0]               # when each target row starts typing, in order
 
 
-def frame(title, rows, label):
+def reveal(i, x0, y, pieces, start):
+    """Typed reveal of inline pieces [(text, class)] at (x0, y): a clip rect grows a
+    character at a time, holds, then shrinks (the build_typing technique), with a
+    blinking caret that is shown only while the reveal is on screen."""
+    CW, T = CARD_CW, REVEAL_LOOP
+    n = sum(len(t) for t, _ in pieces)
+    pts = [(0.0, 0)]
+    pts += [(start + k * REVEAL_TYPE, k) for k in range(1, n + 1)]
+    hold_end = start + n * REVEAL_TYPE + REVEAL_HOLD
+    pts += [(hold_end + (n - k) * REVEAL_ERASE, k) for k in range(n - 1, -1, -1)]
+    end = pts[-1][0]
+    clean = []
+    for tm, v in pts:
+        tm = round(tm / T, 5)
+        if clean and tm <= clean[-1][0]:
+            clean[-1] = (clean[-1][0], v)
+        else:
+            clean.append((tm, v))
+    clean.append((1.0, 0))
+    kt = ";".join(f"{a:g}" for a, _ in clean)
+    # real monospace advances run a little over 0.6em, so give the clip some slack
+    px = lambda v: v * CW * 1.03 + (2 if v else 0)
+    widths = ";".join(f"{px(v):.1f}" for _, v in clean)
+    xs = ";".join(f"{x0 + 1 + px(v):.1f}" for _, v in clean)
+    on, off = round(start / T, 5), round(end / T, 5)
+    anim = f'dur="{T:g}s" repeatCount="indefinite"'
+    body = "".join(f'<tspan class="{c}">{xesc(t)}</tspan>' for t, c in pieces)
+    # base width = full text, so a viewer without SMIL still shows the target
+    return (f'<clipPath id="r{i}"><rect x="{x0:.1f}" y="{y - 14}" height="18" width="{px(n):.1f}">'
+            f'<animate attributeName="width" calcMode="discrete" {anim} keyTimes="{kt}" '
+            f'values="{widths}"/></rect></clipPath>'
+            f'<text x="{x0:.1f}" y="{y}" clip-path="url(#r{i})" xml:space="preserve">{body}</text>'
+            f'<rect class="ac" x="{x0 + 1:.1f}" y="{y - 11}" width="1.6" height="14" visibility="hidden">'
+            f'<animate attributeName="x" calcMode="discrete" {anim} keyTimes="{kt}" values="{xs}"/>'
+            f'<animate attributeName="visibility" calcMode="discrete" {anim} '
+            f'keyTimes="0;{on:g};{off:g}" values="hidden;visible;hidden"/>'
+            f'<animate attributeName="opacity" values="1;1;0;0" keyTimes="0;.5;.5;1" dur="1s" '
+            f'repeatCount="indefinite"/></rect>')
+
+
+def frame(title, rows, label, extra=""):
     """rows: list of rows; each row is a list of (column, text, class, bold).
     An empty list is a blank line. Border runs are stretched with textLength so
     the corners meet in any monospace font."""
@@ -218,7 +295,8 @@ def frame(title, rows, label):
         for col, text, cls, bold in row:
             weight = ' font-weight="700"' if bold else ""
             if isinstance(text, list):      # inline pieces that flow together: [(text, class, bold)]
-                body = "".join(f'<tspan class="{c}"{" font-weight=\"700\"" if b else ""}>{xesc(t)}</tspan>'
+                bw = ' font-weight="700"'
+                body = "".join(f'<tspan class="{c}"{bw if b else ""}>{xesc(t)}</tspan>'
                                for t, c, b in text)
                 p.append(f'<text x="{(3 + col) * CW:.1f}" y="{y}" xml:space="preserve">{body}</text>')
                 continue
@@ -227,7 +305,7 @@ def frame(title, rows, label):
     for yy in range(top + LH // 2, bottom - LH // 2 + 1, LH // 2):   # side rails
         p.append(f'<text class="ac" x="0" y="{yy + 4}">│</text>')
         p.append(f'<text class="ac" x="{W - CW:.1f}" y="{yy + 4}">│</text>')
-    return svg(round(W, 1), H, f'<g font-family="{MONO}" font-size="{CARD_FS}">{"".join(p)}</g>', label)
+    return svg(round(W, 1), H, f'<g font-family="{MONO}" font-size="{CARD_FS}">{"".join(p)}{extra}</g>', label)
 
 
 def build_whoami():
@@ -266,51 +344,115 @@ def build_profile():
     rows = [[(0, "{", "mu", False)],
             kv(2, "based_currently_in", [(f'"{BASED_IN}"', "fg"), (",", "mu")]),
             kv(2, "languages", [("{", "mu")])]
+    reveals = []                         # (row index, language)
     for name, level, word in LANGUAGES:
         bar = [(17, "█" * level, "ac", False)] if level else []
         if level < 10:
             bar.append((17 + level, "░" * (10 - level), "mu", False))
+        if name in CERT_TARGETS:
+            reveals.append((len(rows), name))
         rows.append([(4, f'"{name}"', "fg", False)] + bar + [(28, word, "mu", False)])
     rows += [[(2, "},", "mu", False)],
              kv(2, "off_screen", [("[", "mu")]),
-             *[[(4, line, "fg", False)] for line in wrap_items(OFF_SCREEN, CARD_INNER - 8)],
+             *[[(4, line, "fg", False)] for line in wrap_items(OFF_SCREEN, OFF_SCREEN_WRAP)],
              [(2, "]", "mu", False)],
              [(0, "}", "mu", False)]]
     label = (f"Profile. Based currently in {BASED_IN}. Languages: "
              + ", ".join(f"{n} ({w})" for n, _, w in LANGUAGES)
+             + ". Certificate targets: "
+             + ", ".join(f"{n} {c} by {d}" for n, (c, d) in CERT_TARGETS.items())
              + ". Off-screen: " + ", ".join(OFF_SCREEN) + ".")
-    return frame("profile.json", rows, label)
+    extra = ""
+    for k, (r, name) in enumerate(reveals):
+        cert, by = CERT_TARGETS[name]
+        x0 = (3 + REVEAL_COL) * CARD_CW
+        y = 22 + (r + 1) * CARD_LH            # frame(): top + (row + 1) * line height
+        extra += reveal(k, x0, y, [("→ ", "mu"), (cert, "ac"), (f" · {by}", "fg")],
+                        REVEAL_STARTS[k % len(REVEAL_STARTS)])
+    return frame("profile.json", rows, label, extra)
 
 
-def build_stack():
-    """Rows of tiles: what I've mastered, then what I'm learning now (data & ML, web)."""
-    TW, TH, GAP, LBL, ROWGAP = 72, 84, 8, 22, 24
-    W = len(LEARNING) * TW + (len(LEARNING) - 1) * GAP
+# --- Tech stack ---------------------------------------------------------------
+# stack-mastered.svg is one row of tiles. The learning part is split so the README
+# can wrap each language in <details>: a heading per group, a clickable card per
+# language (learn-<slug>.svg, the <summary>) and a panel of what's inside
+# (learn-<slug>-libs.svg, the opened body).
+STACK_W = 712
+TW, TH, TGAP = 72, 84, 8
 
-    def row(names, y0, title, dashed=False):
-        span = len(names) * TW + (len(names) - 1) * GAP
-        x0 = (W - span) / 2
-        out = [f'<text class="mu" x="{W / 2}" y="{y0 + 12}" text-anchor="middle" font-family="{SANS}" '
-               f'font-size="11" font-weight="700" letter-spacing="2.5">{title}</text>']
-        dash = ' stroke-dasharray="5 4"' if dashed else ""
-        for i, name in enumerate(names):
-            x, y = x0 + i * (TW + GAP), y0 + LBL
-            out.append(f'<rect class="cd" x="{x + .5}" y="{y + .5}" width="{TW - 1}" height="{TH - 1}" rx="12"{dash}/>')
-            out.append(mark(name, x + TW / 2 - 16, y + 14, 32))
-            out.append(f'<text class="fg" x="{x + TW / 2}" y="{y + 68}" text-anchor="middle" '
-                       f'font-family="{SANS}" font-size="11.5" font-weight="600">{LABELS[name]}</text>')
-        return out
 
-    top = row(MASTERED, 0, "MASTERED")
-    y2 = LBL + TH + ROWGAP
-    bottom = row(LEARNING, y2, "LEARNING NOW · DATA &amp; ML", dashed=True)
-    y3 = y2 + LBL + TH + ROWGAP
-    web = row(LEARNING_WEB, y3, "LEARNING NOW · WEB", dashed=True)
-    H = y3 + LBL + TH
-    label = ("Mastered: " + ", ".join(LABELS[n] for n in MASTERED)
-             + ". Learning now, data and ML: " + ", ".join(LABELS[n] for n in LEARNING)
-             + ". Learning now, web: " + ", ".join(LABELS[n] for n in LEARNING_WEB) + ".")
-    return svg(W, H, "".join(top + bottom + web), label)
+def section_title(x, y, title):
+    return (f'<text class="mu" x="{x}" y="{y}" text-anchor="middle" font-family="{SANS}" '
+            f'font-size="11" font-weight="700" letter-spacing="2.5">{xesc(title)}</text>')
+
+
+def tiles(names, y, dashed=False):
+    span = len(names) * TW + (len(names) - 1) * TGAP
+    x0 = (STACK_W - span) / 2
+    dash = ' stroke-dasharray="5 4"' if dashed else ""
+    out = []
+    for i, name in enumerate(names):
+        x = x0 + i * (TW + TGAP)
+        out.append(f'<rect class="cd" x="{x + .5}" y="{y + .5}" width="{TW - 1}" height="{TH - 1}" rx="12"{dash}/>')
+        out.append(mark(name, x + TW / 2 - 16, y + 14, 32))
+        out.append(f'<text class="fg" x="{x + TW / 2}" y="{y + 68}" text-anchor="middle" '
+                   f'font-family="{SANS}" font-size="11.5" font-weight="600">{xesc(LABELS[name])}</text>')
+    return out
+
+
+def build_stack_mastered():
+    LBL = 22
+    inner = [section_title(STACK_W / 2, 12, "MASTERED")] + tiles(MASTERED, LBL)
+    label = "Mastered: " + ", ".join(LABELS[n] for n in MASTERED) + "."
+    return svg(STACK_W, LBL + TH, "".join(inner), label)
+
+
+def build_learn_heading(title):
+    W, H = STACK_W, 40
+    inner = (section_title(W / 2, 14, title)
+             + f'<text class="ac" x="{W / 2}" y="33" text-anchor="middle" font-family="{MONO}" '
+               f'font-size="11">{xesc("click a language to see what I am learning in it ▾")}</text>')
+    return svg(W, H, inner, f"{title.title()}. Click a language to see what I am learning in it.")
+
+
+def hint(items, noun):
+    return f"{len(items)} {noun} ▸"
+
+
+def build_learn_card(lang, icons, items, noun):
+    """The clickable row: icon(s), language, and how many things sit inside."""
+    W, H, IS = STACK_W, 60, 28
+    p = [f'<rect class="cd" x=".5" y=".5" width="{W - 1}" height="{H - 1}" rx="12" stroke-dasharray="5 4"/>']
+    x = 20
+    for name in icons:
+        p.append(mark(name, x, (H - IS) / 2, IS))
+        x += IS + 6
+    p.append(f'<text class="fg" x="{x + 8}" y="{H / 2 + 5.5}" font-family="{SANS}" font-size="16" '
+             f'font-weight="700">{xesc(lang)}</text>')
+    p.append(f'<text class="ac" x="{W - 22}" y="{H / 2 + 4.5}" text-anchor="end" font-family="{MONO}" '
+             f'font-size="13">{xesc(hint(items, noun))}</text>')
+    label = f"{lang}: {len(items)} {noun}. Click to show them."
+    return svg(W, H, "".join(p), label)
+
+
+def build_learn_panel(lang, items, noun, caption):
+    """What's inside a language: tiles in the Learning (dashed) style."""
+    CAP = 26
+    inner = ([f'<text class="mu" x="{STACK_W / 2}" y="14" text-anchor="middle" font-family="{MONO}" '
+              f'font-size="11.5">{xesc(f"{lang.lower()} → {caption}")}</text>']
+             + tiles(items, CAP, dashed=True))
+    label = f"Learning in {lang}: " + ", ".join(LABELS[n] for n in items) + f" ({caption})."
+    return svg(STACK_W, CAP + TH + 2, "".join(inner), label)
+
+
+def stack_outputs():
+    out = {"stack-mastered.svg": build_stack_mastered()}
+    for key, (title, langs) in LEARNING_GROUPS.items():
+        out[f"learn-{key}.svg"] = build_learn_heading(title)
+        for slug, lang, icons, items, noun, caption in langs:
+            out[f"learn-{slug}.svg"] = build_learn_card(lang, icons, items, noun)
+            out[f"learn-{slug}-libs.svg"] = build_learn_panel(lang, items, noun, caption)
+    return out
 
 
 def build_connect(name, label):
@@ -335,7 +477,8 @@ def build_wave():
 
 
 def main():
-    outputs = {"whoami.svg": build_whoami(), "profile.svg": build_profile(), "typing.svg": build_typing(), "stack.svg": build_stack(), "wave.svg": build_wave()}
+    outputs = {"whoami.svg": build_whoami(), "profile.svg": build_profile(), "typing.svg": build_typing(), "wave.svg": build_wave(),
+               **stack_outputs()}
     for name, label in CONNECT:
         outputs[f"connect-{name}.svg"] = build_connect(name, label)
     for name, content in outputs.items():

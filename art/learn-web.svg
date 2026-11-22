@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 712 40" width="712" height="40" role="img" aria-label="Learning Now · Web. Click a language to see what I am learning in it."><style>
+.fg{fill:#1f2328}.mu{fill:#59636e}.ac{fill:#dd2d51}.acs{stroke:#dd2d51}
+.cd{fill:#f6f8fa;stroke:#d1d9e0}.bgs{stroke:#f6f8fa}
+@media(prefers-color-scheme:dark){
+.fg{fill:#f0f6fc}.mu{fill:#9198a1}.ac{fill:#e04060}.acs{stroke:#e04060}
+.cd{fill:#151b23;stroke:#30363d}.bgs{stroke:#151b23}}
+</style><text class="mu" x="356.0" y="14" text-anchor="middle" font-family="Montserrat, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" font-weight="700" letter-spacing="2.5">LEARNING NOW · WEB</text><text class="ac" x="356.0" y="33" text-anchor="middle" font-family="'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11">click a language to see what I am learning in it ▾</text></svg>
