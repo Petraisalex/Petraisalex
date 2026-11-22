@@ -198,13 +198,14 @@ def build_typing():
 # --- About Me cards: box-drawn "files", same frame and width -----------------
 WHOAMI = [  # (key, wrapped lines)
     ("study", ["BSc International Business, Finance major",
-               "MSc Organizational Management, 3 schools"]),
+               "MSc Organizational Management, 3 business schools",
+               "potential switch to Digital Financial Technology"]),
     ("work",  ["Agentic workflows (n8n) & business",
                "intelligence for SMEs and startups"]),
     ("build", ["XGBoost decision engine scoring tabular",
                "transactions in <50 ms for digital banks"]),
-    ("won",   ["Junction Hackathon runner-up of 120+ teams:",
-               "automated ESG scoring for SME lending"]),
+    ("competed", ["RAISE Hackathon Paris: top 3% of 922 teams,",
+                  "cross-border payment fraud model (€7k prize)"]),
 ]
 BASED_IN = "Maastricht, NL"
 LANGUAGES = [("English", 10, "native"), ("Russian", 10, "native"),
@@ -309,7 +310,7 @@ def frame(title, rows, label, extra=""):
 
 
 def build_whoami():
-    KEY, rows = 8, []
+    KEY, rows = max(len(k) for k, _ in WHOAMI) + 3, []   # label column fits the longest key
     for i, (key, lines) in enumerate(WHOAMI):
         for j, line in enumerate(lines):
             row = [(KEY, line, "fg", False)]
